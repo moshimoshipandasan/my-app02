@@ -55,13 +55,14 @@
     }
 
     main {
-      width: min(960px, 90vw);
+      width: min(1080px, 92vw);
       margin: 2.5rem auto;
       display: grid;
       gap: 1.5rem;
     }
 
-    .intro {
+    .intro,
+    .chatbot {
       background: #ffffff;
       padding: 1.5rem;
       border-radius: 16px;
@@ -89,6 +90,125 @@
       color: #0078d4;
     }
 
+    .chatbot {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .chatbot__messages {
+      flex: 1;
+      min-height: 240px;
+      max-height: 420px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .message {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .message__avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      font-size: 0.85rem;
+    }
+
+    .message__bubble {
+      flex: 1;
+      padding: 0.65rem 0.9rem;
+      border-radius: 16px;
+      font-size: 0.95rem;
+      background: #f1f5f9;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    }
+
+    .message--user {
+      flex-direction: row-reverse;
+    }
+
+    .message--user .message__bubble {
+      background: #0078d4;
+      color: #ffffff;
+    }
+
+    .message--user .message__avatar {
+      background: #0078d4;
+      color: #ffffff;
+    }
+
+    .message--bot .message__avatar {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .chatbot__form {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .chatbot__input {
+      flex: 1;
+      border: 1px solid #cbd5e1;
+      border-radius: 999px;
+      padding: 0.65rem 1rem;
+      font-size: 0.95rem;
+      background-color: #f8fafc;
+      transition: border-color 0.2s ease;
+    }
+
+    .chatbot__input:focus {
+      outline: none;
+      border-color: #0078d4;
+      box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.12);
+      background-color: #ffffff;
+    }
+
+    .chatbot__submit {
+      border: none;
+      border-radius: 999px;
+      padding: 0.65rem 1.4rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #ffffff;
+      background: linear-gradient(135deg, #0078d4, #00a4ef);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .chatbot__submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(0, 120, 212, 0.25);
+    }
+
+    .chatbot__submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
     footer {
       margin-top: auto;
       text-align: center;
@@ -110,7 +230,8 @@
     @media (min-width: 960px) {
       main {
         grid-template-columns: 1.2fr 1fr;
-        grid-template-areas: "intro intro" "features features";
+        grid-template-areas: "intro chat" "features chat";
+        align-items: start;
       }
 
       .intro {
@@ -120,6 +241,13 @@
       .features {
         grid-area: features;
         grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .chatbot {
+        grid-area: chat;
+        position: sticky;
+        top: 3rem;
+        max-height: calc(100vh - 6rem);
       }
     }
 
@@ -134,17 +262,32 @@
       }
 
       .intro,
-      .card {
+      .card,
+      .chatbot {
         background: #1e293b;
         box-shadow: 0 15px 30px rgba(15, 23, 42, 0.6);
       }
 
-      nav a {
-        background: rgba(14, 165, 233, 0.15);
+      .message__bubble {
+        background: #1d253a;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.45);
       }
 
-      nav a:hover {
-        background: rgba(14, 165, 233, 0.3);
+      .message--bot .message__avatar {
+        background: #0c4a6e;
+        color: #e0f2fe;
+      }
+
+      .chatbot__input {
+        border-color: #334155;
+        background-color: #111827;
+        color: inherit;
+      }
+
+      .chatbot__input:focus {
+        background-color: #0f172a;
+        border-color: #38bdf8;
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
       }
 
       footer {
@@ -183,10 +326,113 @@
         <p>ユーザーの設定に合わせてライト/ダークモードを自動切り替えします。</p>
       </article>
     </section>
+
+    <section class="chatbot" id="assistant" aria-live="polite">
+      <div>
+        <h2>チャットアシスタント</h2>
+        <p>ご質問があればチャットボットがサポートします。キーワードに反応してヒントを返答します。</p>
+      </div>
+      <div class="chatbot__messages" id="chatMessages" role="log"></div>
+      <form class="chatbot__form" id="chatForm" autocomplete="off">
+        <label class="sr-only" for="chatInput">メッセージ</label>
+        <input class="chatbot__input" id="chatInput" name="message" type="text" placeholder="ご質問をどうぞ…" required>
+        <button class="chatbot__submit" type="submit">送信</button>
+      </form>
+    </section>
   </main>
 
   <footer id="contact">
     <p>&copy; 2024 My App. All rights reserved.</p>
   </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('chatForm');
+      const input = document.getElementById('chatInput');
+      const messages = document.getElementById('chatMessages');
+      const submitButton = form.querySelector('button[type="submit"]');
+
+      const cannedResponses = [
+        {
+          keywords: ['特長', 'feature', 'できること'],
+          reply: '主な特長はレスポンシブ対応・モダンな CSS ・ダークモード対応です。どれについて詳しく知りたいですか?'
+        },
+        {
+          keywords: ['ダーク', 'dark'],
+          reply: 'ダークモードは `prefers-color-scheme` を利用して自動適用します。設定からライト/ダークを切り替えてみてください。'
+        },
+        {
+          keywords: ['使い方', 'how', 'チュートリアル'],
+          reply: '使い方のヒント: 上部ナビから各セクションへ移動し、カードで概要を確認できます。さらに詳しくすることも可能です。'
+        },
+        {
+          keywords: ['お問い合わせ', 'contact', 'メール'],
+          reply: 'お問い合わせはフッターのメールリンクを追加すると便利です。必要ならサンプルをお伝えできます。'
+        },
+        {
+          keywords: ['ありがとう', 'thanks'],
+          reply: 'どういたしまして! 他に気になることがあれば何でも聞いてくださいね。'
+        }
+      ];
+
+      const fallbackReplies = [
+        'その点についてはまだ学習中です。別のキーワードでも試してみてください!',
+        '詳細を教えていただければ、ヒントを探します。',
+        'よろしければ「特長」「ダークモード」「使い方」などのキーワードを使ってみてください。'
+      ];
+
+      const addMessage = (text, sender) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = `message message--${sender}`;
+
+        const avatar = document.createElement('div');
+        avatar.className = 'message__avatar';
+        avatar.textContent = sender === 'user' ? 'You' : 'Bot';
+
+        const bubble = document.createElement('div');
+        bubble.className = 'message__bubble';
+        bubble.textContent = text;
+
+        wrapper.appendChild(avatar);
+        wrapper.appendChild(bubble);
+        messages.appendChild(wrapper);
+        messages.scrollTo({ top: messages.scrollHeight, behavior: 'smooth' });
+      };
+
+      const getBotReply = (userText) => {
+        const normalized = userText.toLowerCase();
+        for (const item of cannedResponses) {
+          if (item.keywords.some(keyword => normalized.includes(keyword))) {
+            return item.reply;
+          }
+        }
+        return fallbackReplies[Math.floor(Math.random() * fallbackReplies.length)];
+      };
+
+      const handleBotReply = (text) => {
+        submitButton.disabled = true;
+        setTimeout(() => {
+          addMessage(getBotReply(text), 'bot');
+          submitButton.disabled = false;
+          input.focus();
+        }, 600);
+      };
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const message = input.value.trim();
+        if (!message) {
+          return;
+        }
+
+        addMessage(message, 'user');
+        input.value = '';
+        handleBotReply(message);
+      });
+
+      // 初期メッセージ
+      addMessage('こんにちは! ページについて気になることがあれば何でも聞いてください。', 'bot');
+    });
+  </script>
 </body>
 </html>
