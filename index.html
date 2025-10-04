@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My App</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      line-height: 1.6;
+      background-color: #f5f5f5;
+      color: #212121;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0078d4, #00a4ef);
+      color: #fff;
+      padding: 1.5rem 1rem;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(1.5rem, 2.5vw + 1rem, 2.75rem);
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+      font-size: 0.95rem;
+    }
+
+    nav a {
+      color: inherit;
+      text-decoration: none;
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.15);
+      transition: background 0.3s ease;
+    }
+
+    nav a:hover {
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    main {
+      width: min(960px, 90vw);
+      margin: 2.5rem auto;
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .intro {
+      background: #ffffff;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .features {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: #ffffff;
+      padding: 1.25rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 1.15rem;
+      color: #0078d4;
+    }
+
+    footer {
+      margin-top: auto;
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    @media (min-width: 640px) {
+      nav {
+        font-size: 1rem;
+      }
+
+      .features {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 960px) {
+      main {
+        grid-template-columns: 1.2fr 1fr;
+        grid-template-areas: "intro intro" "features features";
+      }
+
+      .intro {
+        grid-area: intro;
+      }
+
+      .features {
+        grid-area: features;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        background-color: #0f172a;
+        color: #e2e8f0;
+      }
+
+      header {
+        background: linear-gradient(135deg, #004a93, #0078d4);
+      }
+
+      .intro,
+      .card {
+        background: #1e293b;
+        box-shadow: 0 15px 30px rgba(15, 23, 42, 0.6);
+      }
+
+      nav a {
+        background: rgba(14, 165, 233, 0.15);
+      }
+
+      nav a:hover {
+        background: rgba(14, 165, 233, 0.3);
+      }
+
+      footer {
+        color: #94a3b8;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ようこそ My App へ</h1>
+    <nav>
+      <a href="#features">特長</a>
+      <a href="#about">アプリについて</a>
+      <a href="#contact">お問い合わせ</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro" id="about">
+      <h2>レスポンシブデザインのサンプル</h2>
+      <p>画面サイズに合わせてレイアウトが調整されるデモページです。スマートフォンからデスクトップまで快適に閲覧できます。</p>
+    </section>
+
+    <section class="features" id="features">
+      <article class="card">
+        <h3>スピード重視</h3>
+        <p>軽量なスタイルで、読み込みを高速化しています。見栄えとパフォーマンスのバランスを意識しました。</p>
+      </article>
+      <article class="card">
+        <h3>モダンなコード</h3>
+        <p>CSS Grid や clamp など、モダンな CSS を活用して柔軟なレイアウトを実現しています。</p>
+      </article>
+      <article class="card">
+        <h3>ダークモード対応</h3>
+        <p>ユーザーの設定に合わせてライト/ダークモードを自動切り替えします。</p>
+      </article>
+    </section>
+  </main>
+
+  <footer id="contact">
+    <p>&copy; 2024 My App. All rights reserved.</p>
+  </footer>
+</body>
+</html>
